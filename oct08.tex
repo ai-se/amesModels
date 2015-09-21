@@ -1,35 +1,166 @@
 \documentclass[12pt]{article}
+
+\usepackage{fullpage} 
 \usepackage[margin=1in]{geometry}
-\begin{document}
-\title{Verifying Impossibly Big Models of NAS} 
+\usepackage{times}
+\usepackage{url}
+
+\addtolength{\itemsep}{-0.05in}
+\usepackage[small,compact]{titlesec}
+\usepackage[small,it]{caption}
+ 
+
+
+\newcommand{\bi}{\begin{itemize}[leftmargin=0.5cm]}
+\newcommand{\ei}{\end{itemize}}
+\newcommand{\be}{\begin{enumerate}}
+\newcommand{\ee}{\end{enumerate}}
+\newcommand{\tion}[1]{\S\ref{sect:#1}}
+\newcommand{\fig}[1]{Figure~\ref{fig:#1}}
+\newcommand{\eq}[1]{Equation~\ref{eq:#1}}
+ 
+
+\usepackage[shortlabels]{enumitem}  
+
+\usepackage{cite} 
+\def\baselinestretch{0.92}
+
+
+\setlist{nosep}
+  
+ \usepackage[font={small}]{caption, subfig}
+\setlength{\abovecaptionskip}{1ex}
+ \setlength{\belowcaptionskip}{1ex}
+ \setlength{\floatsep}{1ex}
+ \setlength{\textfloatsep}{1ex}
+\usepackage[compact,small]{titlesec}
+ 
+
+
+
+\begin{document} 
+\vspace{-1cm}
+\title{ Verifying Impossibly Big Models (of NAS)} 
 \author{Tim Menzies (PI),\\
-CS, NC State, Raleigh
+CS, NC State, Raleigh, USA\\
+tim.menzies@gmail.com
 \and
 Neha Rungta\\
-NASA AMES}
+NASA AMES, USA\\
+neharungta@gmail.com}
 \date{}
 \maketitle
+\vspace{-0.75cm}
+~\hrule~\newline
+NASA is struggling to reason about very big, very complex models. NEHA! 
 
-asdas
-I can type tooo...
-asdas
-I can type tooo...
-asdas
-I can type tooo...
-asdas
-I can type tooo...
-asdas
-I can type tooo...asdas
-I can type tooo...
-asdas
-I can type tooo...
-asdas
-I can type tooo...
-asdas
-I can type tooo...
-asdas
-I can type tooo...
-v 
+If we can reason about these models then NEHA! But if the complexity of those models
+defeat us then NEHA!
+
+Over the last twenty years, various
+NASA research teams have tried solving this problem using a variety of techniques:
+\bi
+\item Theorem provers are a promising technology but require complex models to be augmented with extensive annotations describing their properties. Worse, the search space within theorems relating to real-world models is so large, that even state-of-the-art theorem provers cannot handle very large models.
+\item Model checkers can scale to larger models. Such model checkers can test if a small number of most critical assertions can be violated. Like theorem provers, model checkers
+have issues scaling up to large models.
+\item Runtime verification tools can scale to larger models than model checkers. That
+said, given the size of the models now being studied at NASA, these tools still suffer
+from runtime limitations.
+\ei
+The problem with all the above is   state space explosion: in theory,
+$N$ variables each with $V$ different values has a total space of $V^N$. In practice,
+this number can be so large that it cannot be rigorously explored. For example, a system 
+with 300 boolean variables (N=300,V=2) has $2^300$ states; i.e. more states that stars in the observable universe.
+
+The solution, therefore, is to limit the state space. One approach to learning those limits
+is the use of a {\em secondary oracle} that comments ``of all the states, these are more interesting than those''. For example, bounded model checkers say that the most interesting states are the ones some small $k$ steps away from the current frontier. Note that this approach is only as fast  as the secondary oracle.
+%  me12d boley98  Faloutsos1995 platt05 kamvar03 kamvar03
+
+Hence, this research proposes limiting the state space explosion with a very fast secondary oracle called WHERE~\cite{me12d} and GALE~\cite{krall2015gale}. 
+Specifically, 
+our proposal is to use WHERE+GALE as an optimizer to learn constraints that select for better model behaviours and then run formal verification tools in that reduced space.
+
+\newpage\noindent
+\underline{{\bf WHERE and GALE:}} 
+Consider 
+how most optimizers handle  $n$ model inputs:
+\bi
+\item
+ All $n$ vectors are ``evaluated''; i.e. used as model input to
+ generate   output performance scores. 
+\item
+Next, some   some $O(n^2)$ comparison process  select the $m \subset n$ best vectors.
+\ei
+An faster approach, that uses fewer evaluations, is to cluster $n$ vectors
+into a small number of clusters, then
+ execute only a small sample of vectors in each cluster.
+ Limiting the number of evaluations is vital to the success of large-scale modeling
+ at NASA since recent experience has show that the kinds of models we wish to process
+ are very slow indeed. NEHA!
+ 
+ 
+For this work, we propose a top-down  {\em binary spectral clustering} algorithm~\cite{kamvar03} 
+that recursively divides
+the state space along their eigenvectors. Eigenvectors are useful since 
+  $d$ variables can usually be compressed to just
+  a few $e \ll d$ eigenvectors. This approach handles:
+\bi
+\item
+Multiple {\em correlated variables} $i,j,k \subseteq d$, which can be represented
+by a single  eigenvector.
+\item
+{\em Noisy variables} from $d$, which are 
+ignored since they  do not contribute to the signal in the data.
+\item
+{\em Redundant  variables} \mbox{$i,j \in d$} which become (approximately) parallel lines
+in $e$ space. Hence, we 
+can ignore $j$ 
+since effects that change over $j$ all
+change   the same way over $i$.
+\ei
+Standard top-down spectral learners require  $O(n^2)$ calculations at each level 
+of the recursion to find the eigenvectors~\cite{boley98}. A faster method, called WHERE 
+uses Faloutsos'  heuristic~\cite{Faloutsos1995} to
+approximate eigenvectors   in $O(n)$ time~\cite{platt05}.
+WHERE  is a top-down binary clusterer.  
+At each level, WHERE  projects all  vectors onto a line connecting two distant vectors called $P,Q$ (generating this line takes $O(n)$ time\footnote{Pick any vector $O$ at random. Let one pole $P$ by the
+vector farthest from $O$. Let the other pole $Q$ be the vector farthest from $P$. Note that
+finding $P,Q$ requires only $2n$ distance calculations across $n$ vectors.}).
+The line is then divided in half
+and WHERE recurses on each half. 
+%To  find  small clusters of size, say, $m=\sqrt{n}$,
+%WHERE   build a binary tree of height $log_2\sqrt{n}$ with 
+%$2^{log_2\sqrt{n}}=\sqrt{n}$ nodes. Each node   evaluates only two vectors $P,Q$; i.e.
+%WHERE requires at most $2\sqrt{n}$ evaluations.
+
+Using WHERE, we have build a very fast     evolutionary optimizer
+called GALE~\cite{krall2015gale}. 
+GALE is very fast since it uses the above clustering to find and cull much of the 
+search space.
+When dividing the data and 
+evaluating   $P,Q$, if $P$ produces better model performance scores than $Q$, then
+GALE  culls   the worst half of the data (this approach cuts back $n$ examples to $\sqrt{n}$ using
+just $2*log_2{\sqrt{n}}$ evaluations). 
+For the final leaf cluster, GALE says that the {\em direction of improvement} us
+towards the pole
+that generates better performance scores. GALE can then build $n$ new vectors by mutate
+all the vectors in that leaf along the direction of improvement. 
+These mutants become
+generation $i+1$ that can be clustered  and then mutated again to form
+generation $i+2$, etc.
+
+In experiments with large NASA models~\cite{me15z}, GALE has found optimizations comparable to more standard methods, but hundreds of times faster (i.e. four minutes, not 7.5 hours). Note that WHERE+GALE make no assumptions of continuous or discrete-space vectors-- they
+will run on either just as long a there exists some distance predicate that can comment on
+the the similarity of pairs of input states.
+
+\noindent{{\bf GALE and Verification:}}
+
+
+Our proposal, therefore, is to combine 
+
+{\bf About the PIs:} This is the right team to perform this week. NEHA has . PI Menzies has.
+
+
 \newpage
 \bibliographystyle{plain}
 \bibliography{refs}
