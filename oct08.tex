@@ -55,15 +55,12 @@ neharungta@gmail.com}
 
 \section{The Objective}
 
-In the ATM+3 time frame, the goal stated by the Aeronautics Mission Directorate at NASA is to have a system-wide autonomous optimized airspace with a flexible, scalable, and resilient system to meet significant traffic growth and support every changing operator roles and business-network models~\cite{cavolowsky:aiaa}. In this project we propose a  modeling and analysis framework using multi-agent system models and then developing novel analysis techniques to ..[fill in the blank]
+
+A recent report~\cite{nrc:nextgen} on the Next Generation Air Transportation System (NexGen) within the NAS discusses the lack of models that accurately capture the decision making process and actions of the human operators. The report states, \emph{``One might like to use fast-time analytic models and simulations, but unfortunately there are few human-system analytic models that are very predictive, and they are also very context sensitive. There are very
+few analytic models that are up to being very helpful for NextGen, other than for modeling basic vision and hearing.''} The report states that the lack of such human-analytic models will be a problem area for the Federal Aviation Administration (FAA) as it moves toward to the modernization of the NAS in the NextGen. One of the biggest challenge in the development of fast-time simulation that captures human behavior and decision making process is the trade-off between (a) fidelity of the modeled system with respect to the real-world system versus (b) the considerations of computation efficiency and tractability of performing analysis on such models. In this project we propose developing analysis techniques for multi-agent system models that can scale to complex models and are predictive with respect to the safety and performance of the system that was modeled. 
 
 
-\section{The Problem}
-A report~\cite{nrc:nextgen} on the Next Generation Air Transportation System (NexGen) discusses the lack of models that accurately capture the decision making process and actions of the human operators. The report states, \emph{``One might like to use fast-time analytic models and simulations, but unfortunately there are few human-system analytic models that are very predictive, and they are also very context sensitive. There are very
-few analytic models that are up to being very helpful for NextGen, other than for modeling basic vision and hearing.''} The report states that the lack of such
-human-analytic models will be a problem area for the Federal Aviation Administration (FAA) as it moves toward to the modernization of the NAS in the NextGen. One of the biggest challenge in the development of fast-time simulation that captures human behavior and decision making process is the trade-off between (a) fidelity of the modeled system with respect to the real-world system versus (b) the considerations of computation efficiency and tractability of performing analysis on such models.
-
-\subsubsection{Predictive Human operator models} 
+\section{Related Workd}
 
 In the area of civil aviation, measuring a human operator's mental
 state presents a range of challenges to researchers despite various
@@ -76,24 +73,11 @@ Load Index (TLX) cannot adequately test performance across the
 operational envelopes of complex work environments during the design
 stage of the system development cycle.
 
-ACT-R and SOAR and other
-architectures provide the ability to model actual low-level cognitive
-processes~\cite{anderson1997act,laird1987soar,lebiere2013cognitive,liu2009qn,lundinsimulating},
-however, these do not provide the flexibility to describe complex
-systems and interactions at a higher-level of abstraction.
-Furthermore, cognitive models can often be time consuming to construct
-and the construction might not be tractable for the complete
-system~\cite{lebiere2013cognitive}; in addition, these models may not
-be able to represent the decision making process of the
-human~\cite{pritchett2011simulating}. The goal of this project is to
-model and analyze observable behaviors, activities, decision
-processes, and goals of human operators in the NAS as it relates to
-the safety of the overall system.
-
-Work that uses traditional human performance models have to restrict the number of agents that are represented in detail in order to obtain reasonable results~\cite{MIDAS}; for example, restrict the human interactions and activity in a single sector, and the air traffic controller actions and decisions for that sector are represented in details~\cite{MIDAS}. 
+ACT-R, SOAR, and other architectures provide the ability to model actual low-level cognitive processes~\cite{anderson1997act,laird1987soar,lebiere2013cognitive,liu2009qn,lundinsimulating},
+however, these do not provide the flexibility to describe complex systems and interactions at a higher-level of abstraction. Furthermore, cognitive models can often be time consuming to construct and the construction might not be tractable for the complete system~\cite{lebiere2013cognitive}; in addition, these models may not be able to represent the decision making process of the human~\cite{pritchett2011simulating}. Other work that uses traditional human performance models have to restrict the number of agents that are represented in detail in order to obtain reasonable results; for example, recent work restricts the human interactions and activity in a single sector, and the air traffic controller actions and decisions for that sector are represented in details~\cite{MIDAS}. 
 
 
-\section{Multi-agent System Models}
+\section{Predictive Human operator models} 
 
 In this work we propose the use of MAS models as the basis of
 characterizing the decision making process, actions, workload, skill,
@@ -109,9 +93,9 @@ Brahms is a simulation and development environment originally designed
 to model the contextual situated activity behavior of groups of people
 in a real world context~\cite{clancey1998brahms,SierhuisPhD}. In previous work, we created Brahms models for conditions that led to the Air France 447 accident~\cite{hunter:aamas13}, sequence of events that led to the \"{U}berlingen collision~\cite{Rungta:2013}, and performed a comparative evaluation of operator workload between a single pilot operations concept versus a traditional two pilot operation~\cite{Stocker:2015}. More recently, we have developed Brahms models for arrivals and departures at the La Guardia airport based on the work on Departure Sensitive Arrival Scheduling (DSAS) concept developed by the Airspace Operations Lab (AOL) at NASA Ames~\cite{dsas}. 
 
-The DSAS concept provides the ability to maximize departure throughput at LGA without impacting the flow of the arrival traffic; it was part of a research effort to explore NextGen TBO solutions to problems in the New York metroplex. The concept was prototyped in an HITL performed in 2014 that consider operational procedures related to co-ordination, timing, TSS schedule, and other display features available to controllers and supervisors at Center, TRACON, and Tower. The HITL results demonstrate that the DSAS operations have the potential to increase departure throughput at LGA by nine aircraft per hour with insignificant impact on arrivals~\cite{dsas}.  It was our goal to replicate the results of the study within the agent based framework of Brahms. Each scenario evaluated in the HILT of the DSAS study consists of approximately 1.5 hours real time of simulation. During this time, there are between 130 and 150 airplanes being managed by four enroute controllers, three TRACON controllers, and one tower controller at LGA who is responsible for departures and arrivals. The planes are landing at approximately 36 to 40 planes an hour.
+The DSAS concept provides the ability to maximize departure throughput at LGA without impacting the flow of the arrival traffic; it was part of a research effort to explore NextGen TBO solutions to problems in the New York metroplex. The concept was prototyped in an HITL performed in 2014 that consider operational procedures related to co-ordination, timing, TSS schedule, and other display features available to controllers and supervisors at Center, TRACON, and Tower. The HITL results demonstrate that the DSAS operations have the potential to increase departure throughput at LGA by nine aircraft per hour with insignificant impact on arrivals~\cite{dsas}.  It was our goal to replicate the results of the study within the agent based framework of Brahms. Each scenario evaluated in the HILT of the DSAS study consists of approximately 1.5 hours real time of simulation. During this time, there are between 130 and 150 airplanes being managed by four enroute controllers, three TRACON controllers, and one tower controller at LGA who is responsible for departures and arrivals. The planes are landing at approximately 36 to 40 planes an hour. 
 
-\section{Analysis of MAS models} 
+\subsection{Analysis of MAS models} 
 Due to the various decision choices in the model even a single simulation run can take several minutes. This makes any form of exhaustive, proof derivation based techniques based on model checking, theorem-proving or other compraable approaches infeasible to apply~\cite{hunter:aamas13,raimondi:aamas14}. The goal of this work is develop techniques that allow us to successfully analyze the models human system interaction models such that they can be used to predict stuff about the modeled system. 
 
 NASA is struggling to reason about very big, very complex models. NEHA! 
