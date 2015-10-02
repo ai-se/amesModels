@@ -11,9 +11,9 @@
  
 
 
-\newcommand{\bi}{\begin{itemize}[leftmargin=0.5cm]}
+\newcommand{\bi}{\begin{itemize}[leftmargin=0.7cm]}
 \newcommand{\ei}{\end{itemize}}
-\newcommand{\be}{\begin{enumerate}}
+\newcommand{\be}{\begin{enumerate}[leftmargin=0.7cm]}}
 \newcommand{\ee}{\end{enumerate}}
 \newcommand{\tion}[1]{\S\ref{sect:#1}}
 \newcommand{\fig}[1]{Figure~\ref{fig:#1}}
@@ -39,21 +39,67 @@
 
 
 \begin{document} 
-\vspace{-1cm}
-\title{ Verifying Impossibly Big Models (of NAS)} 
-\author{Tim Menzies (PI),\\
-CS, NC State, Raleigh, USA\\
-tim.menzies@gmail.com
-\and
-Neha Rungta\\
-NASA AMES, USA\\
-neharungta@gmail.com}
-\date{}
-\maketitle
-\vspace{-0.75cm}
-~\hrule~\newline
+\begin{center}
+{\Large {\bf  Understanding Huge  Models (of NAS)}}\\
+Tim Menzies (PI), Computer Science, NC State, USA tim.menzies@gmail.com\\ 
+Neha Rungta,  NASA AMES,USA  neharungta@gmail.com
+\end{center}
+\noindent
+\underline{{\bf THE DOMAIN:}}
+NASA is using model-based methods to reason about complex systems. At NASA AMES,
+such models include detailed simulations:
+\bi
+\item Astronauts flying the ORION aircraft to Mars. 
+\item Pilots landing commercial aircraft throw crowded
+airpsaces at  LaGuardia Airport (this work is part of the Next Generation Air Transportation System);
+\ei
+Utilizing NASA's supercomputer facilities, it is possible to simulate these models to find ways to find and fix problems associated with : 
+\bi
+\item Pilot operation procedures that lead to safety violations;
+\item Dangerous spikes in operator workload;
+\item Undesired large deviations in performance (e.g. flight delays).
+\ei 
+But can we trust the conclusions achieved via these models?
 
-\section{The Objective}
+\noindent
+\underline{{\bf THE PROBLEM:}} Before we can trust the output of a model, we must trust the model itself. 
+ACT-R, SOAR, and other architectures provide the ability to model actual low-level cognitive processes~\cite{anderson1997act,laird1987soar,lebiere2013cognitive,liu2009qn,lundinsimulating}. However, 
+such modeling languages cannot  describe complex systems and interactions at a higher-level of abstraction, or   the decision making process of the human~\cite{pritchett2011simulating}. 
+Other modeling tools, like
+the BRAHMS tool used at NASA AMES~\cite{Rungta:2013,Clancey:1998:BSP:306180.306196,brahms-semantics,brahms-jelia,SierhuisPhD} can build more extensive models that know about higher-level human cognitive reasoning. Hence, they are the 
+  tool of choice at   AMES for modeling pilots flying to  New York or  Mars.
+
+The problem with  these large BRAHMS  models is that they contain   more extensive interactions. Hence, when verifying them,  it is   required to severely constrain the analysis.
+For example, recent work restricted the human interactions and activity in a single sector, and the air traffic controller actions to a few  rigidly pre-defined actions~\cite{MIDAS}. 
+
+If we want to understand   the interactions inside complex NASA models that represent   (e.g.) pilots flying to New York or Mars, then we could
+use automatic verification tools. Decades of research at NASA has lead to rigorous and formal verification methods for model-based reasoning. Unfortunately, all those methods suffer from problems of scale.
+\bi
+\item
+{\em Theorem provers} require complex models to be augmented with extensive annotations describing their properties. The search space within theorems can be so large, that even state-of-the-art  provers are defeated by huge   models~\cite{Rungta:2013}.
+\item
+{\em Model checkers}  scale to larger models than theorem proves but   can only test if a small number of most critical assertions can be violated in the most critical regions of large BRAHMS models. Like theorem provers, model checkers
+have issues scaling up to huge models.
+\item
+{\em Runtime verification} is a   promising technology (since it can
+be automatically applied to huge programs)  but, without a guide
+on how to direct its search, runtime verification   fall back to an exhaustive
+search through all combinations-- which is impractical for
+huge models.
+\ei
+\noindent
+\underline{{\bf OUR PROPOSED SOLUTION:}} We propose to find the guides
+that can assist runtime verification in exploring these huge models. Our approach is based on the following premise: XXX
+
+
+scale to larger models than model checkers. That
+said, given the size of the models now being studied at NASA, these tools still suffer
+from runtime limitations.
+\ei
+The problem with all the above is   state space explosion: in theory,
+$N$ variables each with $V$ different values has a total space of $V^N$. In practice,
+this number can be so large that it cannot be rigorously explored. For example, a system 
+with 300 boolean variables (N=300,V=2) has $2^300$ states; i.e. more states that stars in the observable universe.
 
 
 A recent report~\cite{nrc:nextgen} on the Next Generation Air Transportation System (NexGen) within the NAS discusses the lack of models that accurately capture the decision making process and actions of the human operators. The report states, \emph{``One might like to use fast-time analytic models and simulations, but unfortunately there are few human-system analytic models that are very predictive, and they are also very context sensitive. There are very
@@ -73,8 +119,6 @@ Load Index (TLX) cannot adequately test performance across the
 operational envelopes of complex work environments during the design
 stage of the system development cycle.
 
-ACT-R, SOAR, and other architectures provide the ability to model actual low-level cognitive processes~\cite{anderson1997act,laird1987soar,lebiere2013cognitive,liu2009qn,lundinsimulating},
-however, these do not provide the flexibility to describe complex systems and interactions at a higher-level of abstraction. Furthermore, cognitive models can often be time consuming to construct and the construction might not be tractable for the complete system~\cite{lebiere2013cognitive}; in addition, these models may not be able to represent the decision making process of the human~\cite{pritchett2011simulating}. Other work that uses traditional human performance models have to restrict the number of agents that are represented in detail in order to obtain reasonable results; for example, recent work restricts the human interactions and activity in a single sector, and the air traffic controller actions and decisions for that sector are represented in details~\cite{MIDAS}. 
 
 
 \section{Predictive Human operator models} 
