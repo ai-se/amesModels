@@ -45,51 +45,120 @@ Tim Menzies (PI), Computer Science, NC State, USA tim.menzies@gmail.com\\
 Neha Rungta,  NASA AMES,USA  neharungta@gmail.com
 \end{center}
 \noindent
+\underline{{\bf ABSTRACT:}}  
+
+%We seek safer systems. NASA  uses model-based methods to find ways to improve safety in complex systems. 
+The current National Airspace (NAS) is quite safe and accidents are at a record low. Over the past few years, the US has embarked in a transformation of the Air Transportation System (ATS) to address the expected increase of air traffic in the US. The goal is to increase efficiency without compromising safety. There is a critical need for new safety evaluation techniques to verify and validate the interactions of humans and autonomy in the context of new complex software systems and changing roles of the human operator. 
+%But can we trust the conclusions achieved via these models? Some of these models are so large that they defeat formal verification tools. 
+The current state of the art to assess interactions of humans and autonomy is to model the air transportation system as a distributed, interactive system of systems with authority and autonomy assigned to both humans and automation at multiple levels. The scale and complexity of these models make the use of traditional verification and validation techniques intractable. In this work, we propose a novel approach for combining heuristic optimisers with formal verification in order to better understand huge models. In this approach,  optimizers quickly select the smaller, most interesting regions of the model. Our hypothesis (to be tested in this work) is in this smaller space, it is possible that formal verification can completely explore the region of possibilities in the model and  characterize the trade-space between safety, efficiency, and workload on the human operators.
+
 \underline{{\bf THE DOMAIN:}}
-NASA is using model-based methods to reason about complex systems. At NASA AMES,
-such models include detailed simulations:
-\bi
-\item Astronauts flying the ORION aircraft to Mars. 
-\item Pilots landing commercial aircraft throw crowded
-airpsaces at  LaGuardia Airport (this work is part of the Next Generation Air Transportation System);
-\ei
-Utilizing NASA's supercomputer facilities, it is possible to simulate these models to find ways to find and fix problems associated with : 
-\bi
-\item Pilot operation procedures that lead to safety violations;
-\item Dangerous spikes in operator workload;
-\item Undesired large deviations in performance (e.g. flight delays).
-\ei 
-But can we trust the conclusions achieved via these models?
+NASA and the FAA agree that the US need to modernize the ATS and to implement NextGen (Next Generation Air Transportation System) to accommodate the traffic increase over the next 15 years; Europe is going through a similar effort with SESAR. NextGen needs to provide at least the same, if not a better, level of safety. The  NextGen IWP has a requirement (R-1440) that calls for new and improved V\&V techniques for complex systems. 
+
+Recent work at NASA Ames models several scenarios in the Brahms multi-agent framework~\cite{clancey1998brahms,SierhuisPhD}. Some examples include, Brahms models for conditions that led to the Air France 447 accident~\cite{hunter:aamas13}, sequence of events that led to the \"{U}berlingen collision~\cite{Rungta:2013}, and performed a comparative evaluation of operator workload between a single pilot operations concept versus a traditional two pilot
+operation~\cite{Stocker:2015}. More recently, Brahms models have been developed for arrivals and departures at the La Guardia airport based on the work on Departure Sensitive Arrival Scheduling (DSAS) concept developed by the Airspace Operations Lab (AOL) at NASA Ames~\cite{dsas}. Through simulations of these models the interactions between pilots, controllers, and automation several issues regarding safety (Air France 447 and  \"{U}berlingen crashes); performance (DSAS concept), and human operator workload (single pilot operation) have been discovered, characterized, and fixed. 
+
+
+%At NASA AMES, system safey is explored via simulations. The models being simulated
+%here are  many and varied and include: 
+%\bi 
+%\item Astronauts flying the ORION aircraft to Mars. 
+%\item Pilots landing commercial aircraft throw crowded
+%airpsaces at  LaGuardia Airport (this work is part of the Next Generation Air Transportation System);
+%\ei
+%Utilizing NASA's supercomputer facilities, it is possible to simulate these models to find ways to find and fix problems associated with : 
+%\bi
+%\item Pilot operation procedures that lead to safety violations;
+%\item Dangerous spikes in operator workload;
+%\item Undesired large deviations in performance (e.g. flight delays).
+%\ei 
+
 
 \noindent
-\underline{{\bf THE PROBLEM:}} Before we can trust the output of a model, we must trust the model itself. 
-ACT-R, SOAR, and other architectures provide the ability to model actual low-level cognitive processes~\cite{anderson1997act,laird1987soar,lebiere2013cognitive,liu2009qn,lundinsimulating}. However, 
-such modeling languages cannot  describe complex systems and interactions at a higher-level of abstraction, or   the decision making process of the human~\cite{pritchett2011simulating}. 
-Other modeling tools, like
-the BRAHMS tool used at NASA AMES~\cite{Rungta:2013,Clancey:1998:BSP:306180.306196,brahms-semantics,brahms-jelia,SierhuisPhD} can build more extensive models that know about higher-level human cognitive reasoning. Hence, they are the 
-  tool of choice at   AMES for modeling pilots flying to  New York or  Mars.
+\underline{{\bf THE PROBLEM:}} 
+%% nsr: validation of models is not something that we would want to add to the scope fo the current work -- it will get too complicated. 
+%Before we can trust the output of a model, we must trust the model itself. 
+ACT-R, SOAR, and other architectures provide the ability to model actual low-level cognitive processes~\cite{anderson1997act,laird1987soar,lebiere2013cognitive,liu2009qn,lundinsimulating}. However,  such modeling languages cannot  describe complex systems and interactions at a higher-level of abstraction, or   the decision making process of the human~\cite{pritchett2011simulating}. 
+Other modeling tools, like the Brahms tool used at NASA Ames~\cite{Rungta:2013,Clancey:1998:BSP:306180.306196,brahms-semantics,brahms-jelia,SierhuisPhD} can build more extensive models that know about higher-level human cognitive reasoning. Hence, they are the tool of choice at Ames for modeling air traffic management (ATM), NAS operations, and even manned space flight scearios.
 
-The problem with  these large BRAHMS  models is that they contain   more extensive interactions. Hence, when verifying them,  it is   required to severely constrain the analysis.
-For example, recent work restricted the human interactions and activity in a single sector, and the air traffic controller actions to a few  rigidly pre-defined actions~\cite{MIDAS}. 
+The problem with models is that even at a higher-level of abstraction, they can contain fairly extensive interactions as well as a large number of rational agents including their beliefs, goals, and actions. Hence, when verifying them, it is often required to severely constrain the analysis by either creating simpler models or bounding the scope of the verification.
+%For example, recent work restricted the human interactions and activity in a single sector, and the air traffic controller actions to a few  rigidly pre-defined actions~\cite{MIDAS}. 
+There is a pressing need to scale automated verification tools to meet the demands of NextGen. Decades of research at NASA has lead to rigorous and formal verification methods for model-based reasoning. Unfortunately, all those methods suffer from problems of scale. In this work we we focus on model checking based verification techniques.
 
-If we want to understand   the interactions inside complex NASA models that represent   (e.g.) pilots flying to New York or Mars, then we could
-use automatic verification tools. Decades of research at NASA has lead to rigorous and formal verification methods for model-based reasoning. Unfortunately, all those methods suffer from problems of scale.
-\bi
-\item
-{\em Theorem provers} require complex models to be augmented with extensive annotations describing their properties. The search space within theorems can be so large, that even state-of-the-art  provers are defeated by huge   models~\cite{Rungta:2013}.
-\item
-{\em Model checkers}  scale to larger models than theorem proves but   can only test if a small number of most critical assertions can be violated in the most critical regions of large BRAHMS models. Like theorem provers, model checkers
-have issues scaling up to huge models.
-\item
-{\em Runtime verification} is a   promising technology (since it can
-be automatically applied to huge programs)  but, without a guide
-on how to direct its search, runtime verification   fall back to an exhaustive
-search through all combinations-- which is impractical for
-huge models.
-\ei
 \noindent
 \underline{{\bf OUR PROPOSED SOLUTION:}} We propose to find the guides
-that can assist runtime verification in exploring these huge models. Our approach is based on the following premise: XXX
+that can assist model-checking based verification in exploring these huge models. Our approach is based on the  {\em principle of rationality}~\cite{Newell88} which states that experienced operators of any system know that certain actions are most relevant to important outcomes. That is, within the very large decision space of huge models, there exists a much smaller space of relevant and rational actions. If we could somehow find that smaller space, then that would reduce the problems of scale for formal verification. But how to find those smaller spaces?
+
+One method is to use {\em  heuristic optimizers} such as the PI Menzies' GALE system~\cite{krall2015gale}.  When exploring a large space, GALE first applies a fast clustering algorithm to reduce  $n$ examples to $\sqrt{n}$ clusters\footnote{What is in in each cluster? model input?}.  These are sub-divided into a tree of clusters and sub-clusters and sub-sub-sub-clusters, etc. Next, GALE walks down that tree, pruning away sub-trees that contain the undesired model outputs. Undesired outputs include: (1)~conditions that lead to safety violations; (2)~dangerous spikes in operator workload; (3)~undesired large deviations in performance; e.g. flight delays. 
+
+Note that GALE finds small clusters of decisions that contain desired model 
+behavior. Such small clusters are ideal for formal verification tools since
+within those spaces, the number of options are so constrained that verification
+methods can run to termination. 
+%Note also that if GALE cannot find clusters of desired behavior, it can also function as an optimiser.
+Each cluster found by GALE has better or worse ends
+contain subsets with better or worst behavior. GALE's evolutionary optimizer
+mutates members of that cluster towards the better end. This becomes a new population of examples which can be past back to GALE for yet more pruning and
+ mutation. In experiments with large NASA models~\cite{me15z}, GALE has found optimizations comparable to more standard methods, but hundreds of times faster (i.e. four minutes, not 7.5 hours).
+
+ XXX not enough here. need to cycle around
+ 
+ \textbf{Neha: this also needs a tie in to where the model checking part fits in}
+ 
+\noindent
+\underline{{\bf TECHNICAL DETAILS}} 
+GALE uses  a top-down  {\em binary spectral clustering} algorithm~\cite{kamvar03} 
+that recursively divides
+the state space along their eigenvectors. Eigenvectors are useful since 
+  $d$ variables can usually be compressed to just
+  a few $e \ll d$ eigenvectors. This approach handles:
+\bi
+\item
+Multiple {\em correlated variables} $i,j,k \subseteq d$, which can be represented
+by a single  eigenvector.
+\item
+{\em Noisy variables} from $d$, which are 
+ignored since they  do not contribute to the signal in the data.
+\item
+{\em Redundant  variables} \mbox{$i,j \in d$} which become (approximately) parallel lines
+in $e$ space. Hence, we 
+can ignore $j$ 
+since effects that change over $j$ all
+change   the same way over $i$.
+\ei
+Standard top-down spectral learners require  $O(n^2)$ calculations at each level 
+of the recursion to find the eigenvectors~\cite{boley98}. A faster method, called  
+uses Faloutsos'  heuristic~\cite{Faloutsos1995} to
+approximate eigenvectors   in $O(n)$ time~\cite{platt05}.
+GALE uses these eigenvectors for a top-down binary clusterer.  
+At each level, GALE  projects all  vectors onto a line connecting two distant vectors called $P,Q$ (generating this line takes $O(n)$ time\footnote{Faloutsos’ heuristic: Pick any vector $O$ at random. Let one pole $P$ by the
+vector farthest from $O$. Let the other pole $Q$ be the vector farthest from $P$. Note that
+finding $P,Q$ requires only $2n$ distance calculations across $n$ vectors.}).
+The line is then divided in half
+and GALE recurses on each half. 
+%To  find  small clusters of size, say, $m=\sqrt{n}$,
+%WHERE   build a binary tree of height $log_2\sqrt{n}$ with 
+%$2^{log_2\sqrt{n}}=\sqrt{n}$ nodes. Each node   evaluates only two vectors $P,Q$; i.e.
+%WHERE requires at most $2\sqrt{n}$ evaluations.
+
+GALE is very fast since it uses the above clustering to find and cull much of the 
+search space.
+When dividing the data and 
+evaluating   $P,Q$, if $P$ produces better model performance scores than $Q$, then
+GALE  culls   the worst half of the data (this approach cuts back $n$ examples to $\sqrt{n}$ using
+just $2*log_2{\sqrt{n}}$ evaluations). 
+For the final leaf cluster, GALE says that the {\em direction of improvement} us
+towards the pole
+that generates better performance scores. GALE can then build $n$ new vectors by mutate
+all the vectors in that leaf along the direction of improvement. 
+These mutants become
+generation $i+1$ that can be clustered  and then mutated again to form
+generation $i+2$, etc.
+
+ Note that WHERE+GALE make no assumptions of continuous or discrete-space vectors-- they
+will run on either just as long a there exists some distance predicate that can comment on
+the the similarity of pairs of input states.
+
 
 
 scale to larger models than model checkers. That
@@ -164,85 +233,7 @@ with 300 boolean variables (N=300,V=2) has $2^300$ states; i.e. more states that
 
 \section{Our Solution}
 
-The solution, therefore, is to limit the state space. One approach to learning those limits
-is the use of a {\em secondary oracle} that comments ``of all the states, these are more interesting than those''. For example, bounded model checkers say that the most interesting states are the ones some small $k$ steps away from the current frontier. Note that this approach is only as fast  as the secondary oracle.
-%  me12d boley98  Faloutsos1995 platt05 kamvar03 kamvar03
 
-Hence, this research proposes limiting the state space explosion with a very fast secondary oracle called WHERE~\cite{me12d} and GALE~\cite{krall2015gale}. 
-Specifically, 
-our proposal is to use WHERE+GALE as an optimizer to learn constraints that select for better model behaviours and then run formal verification tools in that reduced space.
-
-\underline{{\bf WHERE and GALE:}} 
-Consider 
-how most optimizers handle  $n$ model inputs:
-\bi
-\item
- All $n$ vectors are ``evaluated''; i.e. used as model input to
- generate   output performance scores. 
-\item
-Next, some   some $O(n^2)$ comparison process  selects the $m \subseteq n$ best vectors.
-\ei
-An faster approach, that uses fewer evaluations, is to cluster $n$ vectors
-into a small number of clusters, then
- execute only a small sample of vectors in each cluster.
- Limiting the number of evaluations is vital to the success of large-scale modeling
- at NASA since recent experience has show that the kinds of models we wish to process
- are very slow indeed. NEHA!
- 
- 
-For this work, we propose a top-down  {\em binary spectral clustering} algorithm~\cite{kamvar03} 
-that recursively divides
-the state space along their eigenvectors. Eigenvectors are useful since 
-  $d$ variables can usually be compressed to just
-  a few $e \ll d$ eigenvectors. This approach handles:
-\bi
-\item
-Multiple {\em correlated variables} $i,j,k \subseteq d$, which can be represented
-by a single  eigenvector.
-\item
-{\em Noisy variables} from $d$, which are 
-ignored since they  do not contribute to the signal in the data.
-\item
-{\em Redundant  variables} \mbox{$i,j \in d$} which become (approximately) parallel lines
-in $e$ space. Hence, we 
-can ignore $j$ 
-since effects that change over $j$ all
-change   the same way over $i$.
-\ei
-Standard top-down spectral learners require  $O(n^2)$ calculations at each level 
-of the recursion to find the eigenvectors~\cite{boley98}. A faster method, called WHERE 
-uses Faloutsos'  heuristic~\cite{Faloutsos1995} to
-approximate eigenvectors   in $O(n)$ time~\cite{platt05}.
-WHERE  is a top-down binary clusterer.  
-At each level, WHERE  projects all  vectors onto a line connecting two distant vectors called $P,Q$ (generating this line takes $O(n)$ time\footnote{Faloutsos’ heuristic: Pick any vector $O$ at random. Let one pole $P$ by the
-vector farthest from $O$. Let the other pole $Q$ be the vector farthest from $P$. Note that
-finding $P,Q$ requires only $2n$ distance calculations across $n$ vectors.}).
-The line is then divided in half
-and WHERE recurses on each half. 
-%To  find  small clusters of size, say, $m=\sqrt{n}$,
-%WHERE   build a binary tree of height $log_2\sqrt{n}$ with 
-%$2^{log_2\sqrt{n}}=\sqrt{n}$ nodes. Each node   evaluates only two vectors $P,Q$; i.e.
-%WHERE requires at most $2\sqrt{n}$ evaluations.
-
-Using WHERE, we have build a very fast     evolutionary optimizer
-called GALE~\cite{krall2015gale}. 
-GALE is very fast since it uses the above clustering to find and cull much of the 
-search space.
-When dividing the data and 
-evaluating   $P,Q$, if $P$ produces better model performance scores than $Q$, then
-GALE  culls   the worst half of the data (this approach cuts back $n$ examples to $\sqrt{n}$ using
-just $2*log_2{\sqrt{n}}$ evaluations). 
-For the final leaf cluster, GALE says that the {\em direction of improvement} us
-towards the pole
-that generates better performance scores. GALE can then build $n$ new vectors by mutate
-all the vectors in that leaf along the direction of improvement. 
-These mutants become
-generation $i+1$ that can be clustered  and then mutated again to form
-generation $i+2$, etc.
-
-In experiments with large NASA models~\cite{me15z}, GALE has found optimizations comparable to more standard methods, but hundreds of times faster (i.e. four minutes, not 7.5 hours). Note that WHERE+GALE make no assumptions of continuous or discrete-space vectors-- they
-will run on either just as long a there exists some distance predicate that can comment on
-the the similarity of pairs of input states.
 
 \noindent{{\bf GALE and Verification:}}
 
@@ -252,6 +243,164 @@ Our proposal, therefore, is to combine
 {\bf About the PIs:} This is the right team to perform this week. NEHA has . PI Menzies has.
 
 
+\newpage
+\bibliographystyle{plain}
+\bibliography{refs}
+\end{document}
+
+
+\newpage
+\bibliographystyle{plain}
+\bibliography{refs}
+\end{document}
+
+\newpage
+\bibliographystyle{plain}
+\bibliography{refs}
+\end{document}
+
+\newpage
+\bibliographystyle{plain}
+\bibliography{refs}
+\end{document}
+
+\newpage
+\bibliographystyle{plain}
+\bibliography{refs}
+\end{document}
+
+\newpage
+\bibliographystyle{plain}
+\bibliography{refs}
+\end{document}
+
+\newpage
+\bibliographystyle{plain}
+\bibliography{refs}
+\end{document}
+
+\newpage
+\bibliographystyle{plain}
+\bibliography{refs}
+\end{document}
+
+\newpage
+\bibliographystyle{plain}
+\bibliography{refs}
+\end{document}
+
+\newpage
+\bibliographystyle{plain}
+\bibliography{refs}
+\end{document}
+\newpage
+\bibliographystyle{plain}
+\bibliography{refs}
+\end{document}
+\newpage
+\bibliographystyle{plain}
+\bibliography{refs}
+\end{document}
+\newpage
+\bibliographystyle{plain}
+\bibliography{refs}
+\end{document}
+\newpage
+\bibliographystyle{plain}
+\bibliography{refs}
+\end{document}
+\newpage
+\bibliographystyle{plain}
+\bibliography{refs}
+\end{document}
+\newpage
+\bibliographystyle{plain}
+\bibliography{refs}
+\end{document}
+\newpage
+\bibliographystyle{plain}
+\bibliography{refs}
+\end{document}
+\newpage
+\bibliographystyle{plain}
+\bibliography{refs}
+\end{document}
+\newpage
+\bibliographystyle{plain}
+\bibliography{refs}
+\end{document}
+\newpage
+\bibliographystyle{plain}
+\bibliography{refs}
+\end{document}
+\newpage
+\bibliographystyle{plain}
+\bibliography{refs}
+\end{document}
+\newpage
+\bibliographystyle{plain}
+\bibliography{refs}
+\end{document}
+\newpage
+\bibliographystyle{plain}
+\bibliography{refs}
+\end{document}
+\newpage
+\bibliographystyle{plain}
+\bibliography{refs}
+\end{document}
+\newpage
+\bibliographystyle{plain}
+\bibliography{refs}
+\end{document}
+\newpage
+\bibliographystyle{plain}
+\bibliography{refs}
+\end{document}
+\newpage
+\bibliographystyle{plain}
+\bibliography{refs}
+\end{document}
+\newpage
+\bibliographystyle{plain}
+\bibliography{refs}
+\end{document}
+\newpage
+\bibliographystyle{plain}
+\bibliography{refs}
+\end{document}
+\newpage
+\bibliographystyle{plain}
+\bibliography{refs}
+\end{document}
+\newpage
+\bibliographystyle{plain}
+\bibliography{refs}
+\end{document}
+\newpage
+\bibliographystyle{plain}
+\bibliography{refs}
+\end{document}
+\newpage
+\bibliographystyle{plain}
+\bibliography{refs}
+\end{document}
+\newpage
+\bibliographystyle{plain}
+\bibliography{refs}
+\end{document}
+\newpage
+\bibliographystyle{plain}
+\bibliography{refs}
+\end{document}
+\newpage
+\bibliographystyle{plain}
+\bibliography{refs}
+\end{document}
+\newpage
+\bibliographystyle{plain}
+\bibliography{refs}
+\end{document}
 \newpage
 \bibliographystyle{plain}
 \bibliography{refs}
