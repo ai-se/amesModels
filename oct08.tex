@@ -17,16 +17,11 @@
 \newcommand{\tion}[1]{\S\ref{sect:#1}}
 \newcommand{\fig}[1]{Figure~\ref{fig:#1}}
 \newcommand{\eq}[1]{Equation~\ref{eq:#1}}
- 
-
 \usepackage[shortlabels]{enumitem}  
-
 \usepackage{cite} 
 \def\baselinestretch{0.92}
-
-
 \setlist{nosep}
-  
+
  \usepackage[font={small}]{caption, subfig}
 \setlength{\abovecaptionskip}{1ex}
  \setlength{\belowcaptionskip}{1ex}
@@ -34,60 +29,53 @@
  \setlength{\textfloatsep}{1ex}
 \usepackage[compact,small]{titlesec}
  
-
-
-
 \begin{document} 
 \begin{center}
-{\Large {\bf  Understanding Huge  Models (of NAS)}}\\
+{\Large {\bf  Verifying Safety of NextGen Models: A Rational Approach}}\\
 Tim Menzies (PI), Computer Science, NC State, USA tim.menzies@gmail.com\\ 
 Neha Rungta,  NASA AMES,USA  neharungta@gmail.com
 \end{center}
-\noindent
+
 \underline{{\bf ABSTRACT:}}  
 %We seek safer systems. NASA  uses model-based methods to find ways to improve safety in complex systems. 
 The current National Airspace (NAS) is quite safe and accidents are at a record low. Over the past few years, the US has embarked in a transformation of the Air Transportation System (ATS) to address the expected increase of air traffic in the US. The goal is to increase efficiency without compromising safety. There is a critical need for new safety evaluation techniques to verify and validate the interactions of humans and autonomy in the context of new complex software systems and changing roles of the human operator. 
 %But can we trust the conclusions achieved via these models? Some of these models are so large that they defeat formal verification tools. 
-The current state of the art to assess interactions of humans and autonomy is to model the air transportation system as a distributed, interactive system of systems with authority and autonomy assigned to both humans and automation at multiple levels. The scale and complexity of these models make the use of traditional verification and validation techniques intractable. In this work, we propose a novel approach for combining heuristic optimisers with formal verification in order to better understand huge models. In this approach,  optimizers quickly select the smaller, most interesting regions of the model. Our hypothesis (to be tested in this work) is in this smaller space, it is possible that formal verification can completely explore the region of possibilities in the model and  characterize the trade-space between safety, efficiency, and workload on the human operators.
+The current state of the art to assess interactions of humans and autonomy is to model the air transportation system as a distributed, interactive system of systems with authority and autonomy assigned to both humans and automation at multiple levels. The scale and complexity of these models make the use of traditional verification and validation techniques intractable. 
 
-\underline{{\bf THE DOMAIN:}}
+Hence, we  propose   {\bf exciting and unexplored} research to develop a {\bf new concept} that combines
+heuristic optimizers
+and formal verification tools in order to better understand huge models. 
+ In this approach,  optimizers quickly select the smaller, most interesting regions of the model.
+ While previous work has explored these two approach separately, 
+{\bf no 
+previous work has studied their combination}. Creating this combination is {\bf much more than a mere tool
+or process project}. Rather, it requires  {\bf fundamentally new ideas} for  utilizing a variety of signals
+collected from complex systems.  
+We propose to use the optimizers to find  guides
+that can assist model-checking based verification when exploring these huge models. Our approach is based on the  {\em principle of rationality}~\cite{Newell88} which states that experienced operators of any system know that certain actions are most relevant to important outcomes. That is, within the very large decision space of huge models, there exists a  smaller space of relevant and rational actions. 
+Our hypothesis (to be tested in this work) is in this smaller space, it is possible that formal verification can thoroughly explore a model.
+
+\underline{{\bf  THE DOMAIN:}} Our work is {\bf based on a current NASA  aerospace architecture}.
 NASA and the FAA agree that the US need to modernize the ATS and to implement NextGen (Next Generation Air Transportation System) to accommodate the traffic increase over the next 15 years; Europe is going through a similar effort with SESAR. NextGen needs to provide at least the same, if not a better, level of safety. The  NextGen IWP has a requirement (R-1440) that calls for new and improved V\&V techniques for complex systems. 
 
 Recent work at NASA Ames models several scenarios in the Brahms multi-agent framework~\cite{clancey1998brahms,SierhuisPhD}. Some examples include, Brahms models for conditions that led to the Air France 447 accident~\cite{hunter:aamas13}, sequence of events that led to the \"{U}berlingen collision~\cite{Rungta:2013}, and performed a comparative evaluation of operator workload between a single pilot operations concept versus a traditional two pilot
 operation~\cite{Stocker:2015}. More recently, Brahms models have been developed for arrivals and departures at the La Guardia airport based on the work on Departure Sensitive Arrival Scheduling (DSAS) concept developed by the Airspace Operations Lab (AOL) at NASA Ames~\cite{dsas}. Through simulations of these models the interactions between pilots, controllers, and automation several issues regarding safety (Air France 447 and  \"{U}berlingen crashes); performance (DSAS concept), and human operator workload (single pilot operation) have been discovered, characterized, and fixed. 
-
-
-%At NASA AMES, system safey is explored via simulations. The models being simulated
-%here are  many and varied and include: 
-%\bi 
-%\item Astronauts flying the ORION aircraft to Mars. 
-%\item Pilots landing commercial aircraft throw crowded
-%airpsaces at  LaGuardia Airport (this work is part of the Next Generation Air Transportation System);
-%\ei
-%Utilizing NASA's supercomputer facilities, it is possible to simulate these models to find ways to find and fix problems associated with : 
-%\bi
-%\item Pilot operation procedures that lead to safety violations;
-%\item Dangerous spikes in operator workload;
-%\item Undesired large deviations in performance (e.g. flight delays).
-%\ei 
-
-
-\noindent
-\underline{{\bf THE PROBLEM:}} 
-%% nsr: validation of models is not something that we would want to add to the scope fo the current work -- it will get too complicated. 
-%Before we can trust the output of a model, we must trust the model itself. 
+ 
+ 
+\underline{{\bf  THE PROBLEM:}} 
 ACT-R, SOAR, and other architectures provide the ability to model actual low-level cognitive processes~\cite{anderson1997act,laird1987soar,lebiere2013cognitive,liu2009qn,lundinsimulating}. However,  such modeling languages cannot  describe complex systems and interactions at a higher-level of abstraction, or   the decision making process of the human~\cite{pritchett2011simulating}. 
 Other modeling tools, like the Brahms tool used at NASA Ames~\cite{Rungta:2013,Clancey:1998:BSP:306180.306196,brahms-semantics,brahms-jelia,SierhuisPhD} can build more extensive models that know about higher-level human cognitive reasoning. Hence, they are the tool of choice at Ames for modeling air traffic management (ATM), NAS operations, and even manned space flight scearios.
 
 The problem with models is that even at a higher-level of abstraction, they can contain fairly extensive interactions as well as a large number of rational agents including their beliefs, goals, and actions. Hence, when verifying them, it is often required to severely constrain the analysis by either creating simpler models or bounding the scope of the verification.
 %For example, recent work restricted the human interactions and activity in a single sector, and the air traffic controller actions to a few  rigidly pre-defined actions~\cite{MIDAS}. 
-There is a pressing need to scale automated verification tools to meet the demands of NextGen. Decades of research at NASA has lead to rigorous and formal verification methods for model-based reasoning. Unfortunately, all those methods suffer from problems of scale. In this work we we focus on model checking based verification techniques.
-
-\noindent
-\underline{{\bf OUR PROPOSED SOLUTION:}} We propose to find the guides
-that can assist model-checking based verification in exploring these huge models. Our approach is based on the  {\em principle of rationality}~\cite{Newell88} which states that experienced operators of any system know that certain actions are most relevant to important outcomes. That is, within the very large decision space of huge models, there exists a much smaller space of relevant and rational actions. If we could somehow find that smaller space, then that would reduce the problems of scale for formal verification. But how to find those smaller spaces?
-
-One method is to use {\em  heuristic optimizers} such as the PI Menzies' GALE system~\cite{krall2015gale}.  GALE
+There is a pressing need to scale automated verification tools to meet the demands of NextGen. Decades of research at NASA has lead to rigorous and formal verification methods for model-based reasoning-- all of which suffer from problems of scale.  
+ 
+\underline{{\bf  OUR PROPOSED SOLUTION:}} 
+To make formal verification tools practical for large models,
+we use  the   principle of rationality to find the relevant parts of a model.
+Our proposal is to use the  GALE {\em  heuristic optimizers}~\cite{krall2015gale} to  ``run ahead'' of the formal verification tools to ``shout back'' the most important parts of the model to explore.   
+GALE mimics the actions of a smart human operator of a model that finds the most useful regions within a model.
+GALE
 is an innovative combination of data mining and 
 optimization algorithms:
 \bi
@@ -104,7 +92,7 @@ GALE inputs a random selection of possible model inputs. These
  i.e. prune away sub-trees that contain the undesired model outputs (for the NASA models,
  undesired outputs include: conditions that lead to safety violations; or dangerous spikes in operator workload; or undesired large deviations in performance; e.g. flight delays).
 
-\newcommand{\KK}[1] {\bf {\sffamily #1}}
+\newcommand{\KK}[1] {\em {\sffamily #1}}
 When GALE finishes, it returns just the remaining tiny
 regions   containing the most promising inputs.
 From these regions, we can extract four sets of  input decisions that:
@@ -132,10 +120,7 @@ In this work we propose to use the output generated by GALE to direct the explor
 can also be instantly curtailed;
 \item
 The remaining bounded explorations can be sorted according to
-\bi
-\item How much they use {\KK More};
-\item How little they use {\KK Less}.
-\ei
+how much they use {\KK More} and how little they use {\KK Less}.
 \ei
 Once sorted, the verification tools can then be unleased
 to explore deeper into the model but only
@@ -144,10 +129,15 @@ the model.
 \ei
 
 
+\underline{{\bf  TECHNICAL DETAILS:}} 
+The goal is to use the output of GALE to battle the state space explosion problem when using JPF for the verification of Brahms models. When JPF analyses a Brahms model along with its semantics, a new state is generated when the search within JPF encounters a point of non-determinism that has not yet been explored.  There are three main points of
+non-determinism in the Brahms semantics  (1) probabilistic updates to facts and beliefs of agents, (2) a range of activity durations, and (3) picking the next task to perform. In large models this leads even with a controlled exploration of choices, the state space explosion is a problem. With GALE we hope to overcome this by exploring relevant choices rather a brute force exploration. We will use constraints from GALE to select states (the beliefs and facts of agents and objects) and choices (relevant decisions). This we believe will allow us to mitigate the state space explosion problem and yet be able to characterize the safety, efficiency, and other properties of the model. 
 
- 
-\noindent
-\underline{{\bf TECHNICAL DETAILS}} 
+We recommend GALE for this process since it runs very fast.
+In prior experiments with large NASA models~\cite{me15z}, GALE  found optimizations comparable to more standard methods, but hundreds of times faster; i.e. four minutes, not 7.5 hours.
+
+
+To achieve its fast runtimes,
 GALE uses  a top-down  {\em binary spectral clustering} algorithm~\cite{kamvar03} 
 that recursively divides
 the state space along their eigenvectors.
@@ -165,40 +155,35 @@ and GALE recurses on each half.
 %WHERE   build a binary tree of height $log_2\sqrt{n}$ with 
 %$2^{log_2\sqrt{n}}=\sqrt{n}$ nodes. Each node   evaluates only two vectors $P,Q$; i.e.
 %WHERE requires at most $2\sqrt{n}$ evaluations
-GALE is very fast since it uses the above clustering to find and cull much of the  search space. When dividing the data and  evaluating   $P,Q$, if $P$ produces better model performance scores than $Q$, then GALE  culls   the worst half of the data (this approach cuts back $n$ examples to $\sqrt{n}$ using just $2*log_2{\sqrt{n}}$ evaluations).  For the final leaf cluster, GALE says that the {\em direction of improvement} us towards the pole that generates better performance scores. GALE can then build $n$ new vectors by mutate all the vectors in that leaf along the direction of improvement. These mutants become generation $i+1$ that can be clustered  and then mutated again to form generation $i+2$, etc. Note that  GALE make no assumptions of continuous or discrete-space vectors-- it runs on either using a distance predicate that can comment on the the similarity of pairs of input states. GALE can be used to ``run ahead'' of the formal verification tools to ``shout back'' the most important parts of the model to explore.  This could be quite effective since
-in prior experiments with large NASA models~\cite{me15z}, GALE  found optimizations comparable to more standard methods, but hundreds of times faster; i.e. four minutes, not 7.5 hours.
+GALE is very fast since it uses the above clustering to find and cull much of the  search space. When dividing the data and  evaluating   $P,Q$, if $P$ produces better model performance scores than $Q$, then GALE  culls   the worst half of the data (this approach cuts back $n$ examples to $\sqrt{n}$ using just $2*log_2{\sqrt{n}}$ evaluations).  For the final leaf cluster, GALE says that the {\em direction of improvement} us towards the pole that generates better performance scores. GALE can then build $n$ new vectors by mutate all the vectors in that leaf along the direction of improvement. These mutants become generation $i+1$ that can be clustered  and then mutated again to form generation $i+2$, etc. Note that  GALE make no assumptions of continuous or discrete-space vectors-- it runs on either using a distance predicate that can comment on the the similarity of pairs of input states. 
 
-The goal is to use the output of GALE to battle the state space explosion problem when using JPF for the verification of Brahms models. When JPF analyses a Brahms model along with its semantics, a new state is generated when the search within JPF encounters a point of non-determinism that has not yet been explored.  There are three main points of
-non-determinism in the Brahms semantics  (1) probabilistic updates to facts and beliefs of agents, (2) a range of activity durations, and (3) picking the next task to perform. In large models this leads even with a controlled exploration of choices, the state space explosion is a problem. With GALE we hope to overcome this by exploring relevant choices rather a brute force exploration. We will use constraints from GALE to select states (the beliefs and facts of agents and objects) and choices (relevant decisions). This we believe will allow us to mitigate the state space explosion problem and yet be able to characterize the safety, efficiency, and other properties of the model. 
-
-
-\noindent
-\underline{{\bf SUCCESS CRITERIA}}  To test
+ 
+\underline{{\bf  SUCCESS CRITERIA:}}  To test
 the value of this approach, we only
 need to run the verification tools with and without
 GALE. This work would be a success if, for very large models,
 GALE+verification finds errors missed by just formal verification.
+ 
+\underline{{\bf  WHY THIS TEAM?}} 
+Our proposed approach is {\bf credible and reasonable} as it is based on mature research tools (JPF and GALE)
+being used by researchers with extensive experience in these specific tools, and with NASA systems.
+Dr. Rungta is an internationally recognized expert in
+methods for applying automatic verification methods to models
+~\cite{Rungta:2013,hunter:aamas13,backes:2013,rungta2012change,pasareanu:ase10,rungta2009efficient}.
+She is also skilled in ``mixed methods'' that combine multiple techniques (such as the GALE+JPF approach
+proposed here)~\cite{puasuareanu2011symbolic}.
+Also,
+Dr. Menzies is one of the co-authors of the original GALE 
+paper~\cite{krall2015gale}. He also supervises
+a research lab of eight Ph.D. students,  exploring  GALE and its extensions.
 
-\noindent
-\underline{{\bf WHY THIS TEAM?}} 
+
 Note that much of the case study material required for this
 work is readily available. For the last
 12 months, Dr. Rungta has been conducting extensive studies
 with BRAHMS models. Hence, she is well aware of current
 concerns at NASA.
-
-As to the other aspects of this
-work:
-\bi
-\item
-Dr. Rungta is an internationally recognized expert in
-methods for applying automatic verification methods to models;
-\item
-Dr. Menzies is one of the co-authors of the original GALE 
-paper~\cite{krall2015gale}. He also supervises
-a research lab of eight Ph.D. students, four of
-which are exploring extensions to GALE.
-\ei
+ 
 
 \newpage
 \bibliographystyle{plain}
