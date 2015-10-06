@@ -1,20 +1,19 @@
 \documentclass[12pt]{article}
-
 \usepackage{fullpage} 
 \usepackage[margin=1in]{geometry}
 \usepackage{times}
 \usepackage{url}
 
 \addtolength{\itemsep}{-0.05in}
-\usepackage[small,compact]{titlesec}
-\usepackage[small,it]{caption}
+%\usepackage[small,compact]{titlesec}
+%\usepackage[small,it]{caption}
  
-
-
-\newcommand{\bi}{\begin{itemize}[leftmargin=0.7cm]}
+\newcommand{\bi}{\begin{itemize}[leftmargin=0.4cm]}
 \newcommand{\ei}{\end{itemize}}
-\newcommand{\be}{\begin{enumerate}[leftmargin=0.7cm]}}
+\newcommand{\be}{\begin{enumerate}[leftmargin=0.4cm]}
 \newcommand{\ee}{\end{enumerate}}
+
+ 
 \newcommand{\tion}[1]{\S\ref{sect:#1}}
 \newcommand{\fig}[1]{Figure~\ref{fig:#1}}
 \newcommand{\eq}[1]{Equation~\ref{eq:#1}}
@@ -46,7 +45,6 @@ Neha Rungta,  NASA AMES,USA  neharungta@gmail.com
 \end{center}
 \noindent
 \underline{{\bf ABSTRACT:}}  
-
 %We seek safer systems. NASA  uses model-based methods to find ways to improve safety in complex systems. 
 The current National Airspace (NAS) is quite safe and accidents are at a record low. Over the past few years, the US has embarked in a transformation of the Air Transportation System (ATS) to address the expected increase of air traffic in the US. The goal is to increase efficiency without compromising safety. There is a critical need for new safety evaluation techniques to verify and validate the interactions of humans and autonomy in the context of new complex software systems and changing roles of the human operator. 
 %But can we trust the conclusions achieved via these models? Some of these models are so large that they defeat formal verification tools. 
@@ -89,48 +87,75 @@ There is a pressing need to scale automated verification tools to meet the deman
 \underline{{\bf OUR PROPOSED SOLUTION:}} We propose to find the guides
 that can assist model-checking based verification in exploring these huge models. Our approach is based on the  {\em principle of rationality}~\cite{Newell88} which states that experienced operators of any system know that certain actions are most relevant to important outcomes. That is, within the very large decision space of huge models, there exists a much smaller space of relevant and rational actions. If we could somehow find that smaller space, then that would reduce the problems of scale for formal verification. But how to find those smaller spaces?
 
-One method is to use {\em  heuristic optimizers} such as the PI Menzies' GALE system~\cite{krall2015gale}.  When exploring a large space, GALE first applies a fast clustering algorithm to reduce  $n$ examples to $\sqrt{n}$ clusters\footnote{What is in in each cluster? model input?}.  These are sub-divided into a tree of clusters and sub-clusters and sub-sub-sub-clusters, etc. Next, GALE walks down that tree, pruning away sub-trees that contain the undesired model outputs. Undesired outputs include: (1)~conditions that lead to safety violations; (2)~dangerous spikes in operator workload; (3)~undesired large deviations in performance; e.g. flight delays. 
+One method is to use {\em  heuristic optimizers} such as the PI Menzies' GALE system~\cite{krall2015gale}.  GALE
+is an innovative combination of data mining and 
+optimization algorithms:
+\bi
+\item
+The data mining divides the data into tiny regions
+with {\em best} and {\em worst} ends.
+\item
+The optimizer builds new solutions by mutating  the solutions
+in a region towards the {\em best} end.
+\ei
+GALE inputs a random selection of possible model inputs. These
+ inputs are clustered to   reduce  $n$ inputs into $\sqrt{n}$ clusters.
+ These are then sub-divided into a tree of clusters and sub-clusters and sub-sub-sub-clusters, etc. Next, GALE walks down that tree performing {\em binary culling};
+ i.e. prune away sub-trees that contain the undesired model outputs (for the NASA models,
+ undesired outputs include: conditions that lead to safety violations; or dangerous spikes in operator workload; or undesired large deviations in performance; e.g. flight delays).
 
-Note that GALE finds small clusters of decisions that contain desired model 
-behavior. Such small clusters are ideal for formal verification tools since
-within those spaces, the number of options are so constrained that verification
-methods can run to termination. 
-%Note also that if GALE cannot find clusters of desired behavior, it can also function as an optimiser.
-Each cluster found by GALE has better or worse ends
-contain subsets with better or worst behavior. GALE's evolutionary optimizer
-mutates members of that cluster towards the better end. This becomes a new population of examples which can be past back to GALE for yet more pruning and
- mutation. In experiments with large NASA models~\cite{me15z}, GALE has found optimizations comparable to more standard methods, but hundreds of times faster (i.e. four minutes, not 7.5 hours).
+\newcommand{\KK}[1] {\bf {\sffamily #1}}
+When GALE finishes, it returns just the remaining tiny
+regions   containing the most promising inputs.
+From these regions, we can extract four sets of  input decisions that:
+\bi
+\item  {\KK Never} appear in the promising regions;
+\item Appear at the {\KK Same} frequency at the {\em best}and {\em worst} ends;
+\item Are {\KK More} frequent at the best end than the worst end;
+\item Are {\KK Less} frequent at the best  end than the rowst end.
+\ei
+These tiny ranges, the above four sets, could be used
+to enable better model verification using automatic verification tools. Firstly, the restrictions on the model
+space mean that the verification tools need to only search
+a small percentage of the total model space. Secondly,
+the above four sets can be used to heuristically order the internal execution of the verification.
 
- XXX not enough here. need to cycle around
- 
- \textbf{Neha: this also needs a tie in to where the model checking part fits in}
+In this work we propose to use the Java Pathfinder (JPF)~\cite{jpf} framework to perform GALE-directed verification of Brahms models. JPF is an extensible Java
+Virtual Machine (JVM) for developing and exploring
+different verification techniques and application
+domains. In previous work we have developed an extension to JPF that allows us to systematically explore all possible behaviors of Brahms models~\cite{Rungta:13}. JPF uses a generic model of the program state space consisting of {\em States}, {\em Choices} and {\em Transitions}.  {\em States} are restorable snapshots of a program execution along a particular path.  We leverage the choice generation mechanism within JPF to interact with the Brahms simulator and generate all possible choices at points of non-determinism within a Brahms model. This is an important advantage afforded by JPF, most model checkers do not provide user-configurable options to manage domain-specific types of non-determinism.
+
+In this work we propose to use the output generated by GALE to direct the exploration within JPF. Specifically, we propose use constraints generated by GALE to perform a targeted exploration of the space using JPF. We will develop techniques that allow us to ensure:
+\bi
+\item Any exploration that reaches a {\KK Never} can be instantly curtailed;
+\item Similarly, any exploration that changes a {\KK Some} decision
+can also be instantly curtailed;
+\item
+The remaining bounded explorations can be sorted according to
+\bi
+\item How much they use {\KK More};
+\item How little they use {\KK Less}.
+\ei
+\ei
+Once sorted, the verification tools can then be unleased
+to explore deeper into the model but only
+on this smaller, most relevant portion of
+the model.
+\ei
+
+
+
  
 \noindent
 \underline{{\bf TECHNICAL DETAILS}} 
 GALE uses  a top-down  {\em binary spectral clustering} algorithm~\cite{kamvar03} 
 that recursively divides
-the state space along their eigenvectors. Eigenvectors are useful since 
-  $d$ variables can usually be compressed to just
-  a few $e \ll d$ eigenvectors. This approach handles:
-\bi
-\item
-Multiple {\em correlated variables} $i,j,k \subseteq d$, which can be represented
-by a single  eigenvector.
-\item
-{\em Noisy variables} from $d$, which are 
-ignored since they  do not contribute to the signal in the data.
-\item
-{\em Redundant  variables} \mbox{$i,j \in d$} which become (approximately) parallel lines
-in $e$ space. Hence, we 
-can ignore $j$ 
-since effects that change over $j$ all
-change   the same way over $i$.
-\ei
+the state space along their eigenvectors.
 Standard top-down spectral learners require  $O(n^2)$ calculations at each level 
 of the recursion to find the eigenvectors~\cite{boley98}. A faster method, called  
 uses Faloutsos'  heuristic~\cite{Faloutsos1995} to
 approximate eigenvectors   in $O(n)$ time~\cite{platt05}.
-GALE uses these eigenvectors for a top-down binary clusterer.  
+GALE uses these eigenvectors for a top-down binary clusterer. 
 At each level, GALE  projects all  vectors onto a line connecting two distant vectors called $P,Q$ (generating this line takes $O(n)$ time\footnote{Faloutsos’ heuristic: Pick any vector $O$ at random. Let one pole $P$ by the
 vector farthest from $O$. Let the other pole $Q$ be the vector farthest from $P$. Note that
 finding $P,Q$ requires only $2n$ distance calculations across $n$ vectors.}).
@@ -139,25 +164,46 @@ and GALE recurses on each half.
 %To  find  small clusters of size, say, $m=\sqrt{n}$,
 %WHERE   build a binary tree of height $log_2\sqrt{n}$ with 
 %$2^{log_2\sqrt{n}}=\sqrt{n}$ nodes. Each node   evaluates only two vectors $P,Q$; i.e.
-%WHERE requires at most $2\sqrt{n}$ evaluations.
+%WHERE requires at most $2\sqrt{n}$ evaluations
+GALE is very fast since it uses the above clustering to find and cull much of the  search space. When dividing the data and  evaluating   $P,Q$, if $P$ produces better model performance scores than $Q$, then GALE  culls   the worst half of the data (this approach cuts back $n$ examples to $\sqrt{n}$ using just $2*log_2{\sqrt{n}}$ evaluations).  For the final leaf cluster, GALE says that the {\em direction of improvement} us towards the pole that generates better performance scores. GALE can then build $n$ new vectors by mutate all the vectors in that leaf along the direction of improvement. These mutants become generation $i+1$ that can be clustered  and then mutated again to form generation $i+2$, etc. Note that  GALE make no assumptions of continuous or discrete-space vectors-- it runs on either using a distance predicate that can comment on the the similarity of pairs of input states. GALE can be used to ``run ahead'' of the formal verification tools to ``shout back'' the most important parts of the model to explore.  This could be quite effective since
+in prior experiments with large NASA models~\cite{me15z}, GALE  found optimizations comparable to more standard methods, but hundreds of times faster; i.e. four minutes, not 7.5 hours.
 
-GALE is very fast since it uses the above clustering to find and cull much of the 
-search space.
-When dividing the data and 
-evaluating   $P,Q$, if $P$ produces better model performance scores than $Q$, then
-GALE  culls   the worst half of the data (this approach cuts back $n$ examples to $\sqrt{n}$ using
-just $2*log_2{\sqrt{n}}$ evaluations). 
-For the final leaf cluster, GALE says that the {\em direction of improvement} us
-towards the pole
-that generates better performance scores. GALE can then build $n$ new vectors by mutate
-all the vectors in that leaf along the direction of improvement. 
-These mutants become
-generation $i+1$ that can be clustered  and then mutated again to form
-generation $i+2$, etc.
+The goal is to use the output of GALE to battle the state space explosion problem when using JPF for the verification of Brahms models. When JPF analyses a Brahms model along with its semantics, a new state is generated when the search within JPF encounters a point of non-determinism that has not yet been explored.  There are three main points of
+non-determinism in the Brahms semantics  (1) probabilistic updates to facts and beliefs of agents, (2) a range of activity durations, and (3) picking the next task to perform. In large models this leads even with a controlled exploration of choices, the state space explosion is a problem. With GALE we hope to overcome this by exploring relevant choices rather a brute force exploration. We will use constraints from GALE to select states (the beliefs and facts of agents and objects) and choices (relevant decisions). This we believe will allow us to mitigate the state space explosion problem and yet be able to characterize the safety, efficiency, and other properties of the model. 
 
- Note that WHERE+GALE make no assumptions of continuous or discrete-space vectors-- they
-will run on either just as long a there exists some distance predicate that can comment on
-the the similarity of pairs of input states.
+
+\noindent
+\underline{{\bf SUCCESS CRITERIA}}  To test
+the value of this approach, we only
+need to run the verification tools with and without
+GALE. This work would be a success if, for very large models,
+GALE+verification finds errors missed by just formal verification.
+
+\noindent
+\underline{{\bf WHY THIS TEAM?}} 
+Note that much of the case study material required for this
+work is readily available. For the last
+12 months, Dr. Rungta has been conducting extensive studies
+with BRAHMS models. Hence, she is well aware of current
+concerns at NASA.
+
+As to the other aspects of this
+work:
+\bi
+\item
+Dr. Rungta is an internationally recognized expert in
+methods for applying automatic verification methods to models;
+\item
+Dr. Menzies is one of the co-authors of the original GALE 
+paper~\cite{krall2015gale}. He also supervises
+a research lab of eight Ph.D. students, four of
+which are exploring extensions to GALE.
+\ei
+
+\newpage
+\bibliographystyle{plain}
+\bibliography{refs}
+\end{document}
 
 
 
@@ -237,171 +283,3 @@ with 300 boolean variables (N=300,V=2) has $2^300$ states; i.e. more states that
 
 \noindent{{\bf GALE and Verification:}}
 
-
-Our proposal, therefore, is to combine 
-
-{\bf About the PIs:} This is the right team to perform this week. NEHA has . PI Menzies has.
-
-
-\newpage
-\bibliographystyle{plain}
-\bibliography{refs}
-\end{document}
-
-
-\newpage
-\bibliographystyle{plain}
-\bibliography{refs}
-\end{document}
-
-\newpage
-\bibliographystyle{plain}
-\bibliography{refs}
-\end{document}
-
-\newpage
-\bibliographystyle{plain}
-\bibliography{refs}
-\end{document}
-
-\newpage
-\bibliographystyle{plain}
-\bibliography{refs}
-\end{document}
-
-\newpage
-\bibliographystyle{plain}
-\bibliography{refs}
-\end{document}
-
-\newpage
-\bibliographystyle{plain}
-\bibliography{refs}
-\end{document}
-
-\newpage
-\bibliographystyle{plain}
-\bibliography{refs}
-\end{document}
-
-\newpage
-\bibliographystyle{plain}
-\bibliography{refs}
-\end{document}
-
-\newpage
-\bibliographystyle{plain}
-\bibliography{refs}
-\end{document}
-\newpage
-\bibliographystyle{plain}
-\bibliography{refs}
-\end{document}
-\newpage
-\bibliographystyle{plain}
-\bibliography{refs}
-\end{document}
-\newpage
-\bibliographystyle{plain}
-\bibliography{refs}
-\end{document}
-\newpage
-\bibliographystyle{plain}
-\bibliography{refs}
-\end{document}
-\newpage
-\bibliographystyle{plain}
-\bibliography{refs}
-\end{document}
-\newpage
-\bibliographystyle{plain}
-\bibliography{refs}
-\end{document}
-\newpage
-\bibliographystyle{plain}
-\bibliography{refs}
-\end{document}
-\newpage
-\bibliographystyle{plain}
-\bibliography{refs}
-\end{document}
-\newpage
-\bibliographystyle{plain}
-\bibliography{refs}
-\end{document}
-\newpage
-\bibliographystyle{plain}
-\bibliography{refs}
-\end{document}
-\newpage
-\bibliographystyle{plain}
-\bibliography{refs}
-\end{document}
-\newpage
-\bibliographystyle{plain}
-\bibliography{refs}
-\end{document}
-\newpage
-\bibliographystyle{plain}
-\bibliography{refs}
-\end{document}
-\newpage
-\bibliographystyle{plain}
-\bibliography{refs}
-\end{document}
-\newpage
-\bibliographystyle{plain}
-\bibliography{refs}
-\end{document}
-\newpage
-\bibliographystyle{plain}
-\bibliography{refs}
-\end{document}
-\newpage
-\bibliographystyle{plain}
-\bibliography{refs}
-\end{document}
-\newpage
-\bibliographystyle{plain}
-\bibliography{refs}
-\end{document}
-\newpage
-\bibliographystyle{plain}
-\bibliography{refs}
-\end{document}
-\newpage
-\bibliographystyle{plain}
-\bibliography{refs}
-\end{document}
-\newpage
-\bibliographystyle{plain}
-\bibliography{refs}
-\end{document}
-\newpage
-\bibliographystyle{plain}
-\bibliography{refs}
-\end{document}
-\newpage
-\bibliographystyle{plain}
-\bibliography{refs}
-\end{document}
-\newpage
-\bibliographystyle{plain}
-\bibliography{refs}
-\end{document}
-\newpage
-\bibliographystyle{plain}
-\bibliography{refs}
-\end{document}
-\newpage
-\bibliographystyle{plain}
-\bibliography{refs}
-\end{document}
-\newpage
-\bibliographystyle{plain}
-\bibliography{refs}
-\end{document}
-\newpage
-\bibliographystyle{plain}
-\bibliography{refs}
-\end{document}
