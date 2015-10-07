@@ -1,0 +1,40 @@
+KEY, CENTRAL OBJECTIVES OF THE PROPOSAL
+
+Over the past few years, the US has embarked in a transformation
+of the Air TransportationSystem (ATS) to address the expected
+increase of air traffic in the US.  The current state of the art
+to assess interactions of humans and autonomy is to model the air
+transportation system as a distributed, interactive system of systems
+with authority and autonomy assigned to both humans and automationat
+multiple levels. The scale and complexity of these models make the
+use of traditional verification and validation techniques intractable.
+
+A CONCISE STATEMENT OF THE METHODS/TECHNIQUES
+
+We propose exciting and unexplored research to develop anew conceptthat
+combines heuristic optimizers and formal verification tools in order
+to better understand huge models. In thisapproach,  optimizers
+quickly  select  the  smaller,  most interesting  regions  of  the
+model.   While previous work has explored these two approach
+separately, no previous work has studied their combination.  Creating
+this combination is much more than a mere tool or process project. Rather,
+it requires fundamentally new ideas for utilizing a variety of signals
+collected from complex systems. We propose to use the optimizers
+to find guides that can assist model-checking based verification
+when exploring these huge models. Our approach is based on theprinciple
+of rationality which states that experienced operators of any
+system know that certain actions are mostrelevant to important
+outcomes. That is, within the very large decision space of huge
+models, there exists a smaller space of relevant and rational actions.
+Our hypothesis (to be tested in this work) isin this smaller space,
+it is possible that formal verification can thoroughly explore a
+model more thoroughly.
+
+SIGNIFICANCE OF THE PROPOSED WORK 
+
+As air spaces gets more crowded; safety concerns become more critical.
+There is a critical need for new safety evaluation techniques to
+verify and validate the interactions of humans and autonomy in the
+context of new complex software systems and changing roles of the
+human operator.
+
