@@ -1,6 +1,6 @@
-Src=tuningpredictor
-Name=15tune
-Bib=tuningpredictor.bib
+Src=oct08
+Name=15oct8
+Bib=refs.bib
 
 all : dirs tex bib  tex tex embedfonts done
 
